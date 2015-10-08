@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="UTF-8">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Line Editor</title>
+	<script type="text/javascript" src="./../syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+	<script type="text/javascript" src="./../syntaxhighlighter_3.0.83/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="./../syntaxhighlighter_3.0.83/styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<pre class="brush: js;">
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <winsock2.h>
+
+#include <openssl/bn.h>
+#include <openssl/rsa.h>
+#include <openssl/rand.h>
+#include <openssl/des.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+
+#define         BUFSIZE         1024
+#define         PORT            9546
+
+#define KEY_SIZE		16
+#define FACTOR_SIZE			512/8
+#define RSA_KEY_SIZE		1024/8
+#define MAX_MESSAGE_SIZE	1024
+
+void ErrorHandling(char *);
+void PrintHex(unsigned char* str, int strLen);
+int Hash(unsigned char *InStr, int InStrLen, unsigned char *OutStr, int *OutStrLen);
+
+const char* clientFilename = "client.txt";
+const char* serverFilename = "../server/server.txt";
+
+FILE *cStream;
+FILE *sStream;
+
+int main()
+{
+
+        WSADATA wsaData;
+        SOCKET hSocket;
+        SOCKADDR_IN servAddr;
+        
+        // 공개키(RSA) 연산 (수학 연산)
+	BIGNUM			*bn_p;
+	BIGNUM			*bn_q;
+	BIGNUM			*bn_n;
+	BIGNUM			*bn_pi_n;
+	BIGNUM			*bn_e;
+	BIGNUM			*bn_d;
+	BIGNUM			*bn_1;
+	BIGNUM			*bn_plane;
+	BIGNUM			*bn_cipher;
+	BIGNUM			*bn_temp1;
+	BIGNUM			*bn_temp2;
+
+        char *nValue;
+        char *dValue;
+        char *eValue;
+        char *cipherText;
+        char userID[BUFSIZE];
+        char randValue[BUFSIZE];
+        char auth[3]={0};
+        
+
+        unsigned char	inHash[MAX_MESSAGE_SIZE];
+        unsigned char	outHash[MAX_MESSAGE_SIZE];
+
+        int strLen;
+        int cnt;
+        int outHashLen;
+
+	BN_CTX			*bn_ctx;
+
+	unsigned char	strPlane[MAX_MESSAGE_SIZE];
+	unsigned char	strCipher[MAX_MESSAGE_SIZE];
+	unsigned char	strTemp1[MAX_MESSAGE_SIZE];
+        unsigned char	strTemp2[MAX_MESSAGE_SIZE];
+        int     strPlaneLen=0;
+	int     strCipherLen=0;
+	int     strTemp1Len=0;
+	int     strTemp2Len=0;
+
+
+        printf("Client... ready... \n");
+
+        bn_p		= BN_new();
+	bn_q		= BN_new();
+	bn_n		= BN_new();
+	bn_pi_n		= BN_new();
+	bn_e		= BN_new();
+	bn_d		= BN_new();
+	bn_1		= BN_new();
+	bn_plane	= BN_new();
+	bn_cipher	= BN_new();
+	bn_temp1	= BN_new();
+	bn_temp2	= BN_new();
+
+	bn_ctx		= BN_CTX_new();
+
+	memset(strPlane, 0, MAX_MESSAGE_SIZE);
+	memset(strCipher, 0, MAX_MESSAGE_SIZE);
+	memset(strTemp1, 0, MAX_MESSAGE_SIZE);
+	memset(strTemp2, 0, MAX_MESSAGE_SIZE);
+
+
+	// p,q,n,φ(n),e,d 생성
+	// p,q 생성
+	BN_generate_prime(bn_p, FACTOR_SIZE*8, 0, NULL, NULL, NULL, NULL);
+	printf("p : ");
+
+	//BN_print_fp(stdout, bn_p);
+	printf("\n= %s\n\n", BN_bn2dec(bn_p));
+	getchar();
+
+	BN_generate_prime(bn_q, FACTOR_SIZE*8, 0, NULL, NULL, NULL, NULL);
+	printf("q : ");
+	//BN_print_fp(stdout, bn_q);
+	printf("\n= %s\n\n", BN_bn2dec(bn_q));
+	getchar();
+
+	// n,φ(n) 생성
+	// n=p*q;
+	BN_mul(bn_n, bn_p, bn_q, bn_ctx);
+	printf("n : ");
+	//BN_print_fp(stdout, bn_n);
+	printf("\n= %s\n\n", BN_bn2dec(bn_n));
+	getchar();
+
+	//  φ(n)=(p-1)*(q-1)
+	BN_set_word(bn_1, 1);
+	BN_sub(bn_temp1, bn_p, bn_1);
+	BN_sub(bn_temp2, bn_q, bn_1);
+	BN_mul(bn_pi_n, bn_temp1, bn_temp2, bn_ctx);
+	printf("φ(n) : ");
+	//BN_print_fp(stdout, bn_pi_n);
+	printf("\n= %s\n\n", BN_bn2dec(bn_pi_n));
+	getchar();
+
+	// e,d 생성
+	// gcd(e, φ(n))=1;
+	BN_set_word(bn_e, 65537);
+	printf("e : ");
+	//BN_print_fp(stdout, bn_e);
+	printf("\n= %s\n\n", BN_bn2dec(bn_e));
+	getchar();
+
+	// d=e_1 modφ(n)
+	BN_mod_inverse(bn_d, bn_e, bn_pi_n, bn_ctx);
+	printf("d : ");
+	//BN_print_fp(stdout, bn_d);
+	printf("\n= %s\n\n", BN_bn2dec(bn_d));
+	getchar();
+
+	// ed modφ(n)=1 검사
+	BN_mod_mul(bn_temp1, bn_e, bn_d, bn_pi_n, bn_ctx);
+	printf("ed modφ(n) : ");
+	// BN_print_fp(stdout, bn_temp1);
+	printf("\n= %s\n\n", BN_bn2dec(bn_temp1));
+	getchar();
+
+
+        // Soket 을 이용한 네트워크 형성
+        if( WSAStartup(MAKEWORD(2, 2), &wsaData) != 0 )
+                ErrorHandling("WSAStartup() error!");
+
+        hSocket = socket(PF_INET, SOCK_STREAM, 0);
+
+        if( hSocket == INVALID_SOCKET )
+                ErrorHandling("socket() error!");
+
+        memset(&servAddr, 0, sizeof(servAddr));
+        servAddr.sin_family = AF_INET;
+        servAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        servAddr.sin_port = htons(PORT);
+
+        // 서버 접속 실패시 에러출력
+        if( connect(hSocket, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR )
+                ErrorHandling("connect() error!");
+
+        cnt=0;
+        while( cnt<1)
+        {
+
+                // 파일을 오픈합니다
+                if( (cStream=fopen(clientFilename, "w+")) == NULL )
+                {
+                        printf("File Open failed.\n");
+                        exit(1);
+                }
+
+                if( (sStream=fopen(serverFilename, "w+")) == NULL )
+                {
+                        printf("File Open failed.\n");
+                        exit(1);
+                }
+
+                fputs("ID 입력하세요 (q to Quit) : ", stdout);
+                fgets(userID, BUFSIZE, stdin);
+
+                dValue = BN_bn2dec(bn_d);
+                nValue = BN_bn2dec(bn_n);
+                eValue = BN_bn2dec(bn_e);
+                
+                
+                fprintf(cStream, userID);
+                fprintf(cStream, eValue);
+                fprintf(cStream, "\n");
+                fprintf(cStream, dValue);
+                fprintf(cStream, "\n");
+                fprintf(cStream, nValue);
+
+                fprintf(sStream, nValue);
+                fprintf(sStream, "\n");
+                fprintf(sStream, userID);
+                fprintf(sStream, eValue);
+                
+                fclose(cStream);
+                fclose(sStream);
+
+
+                if( !strcmp( userID, "q\n") )
+                        break;
+
+                // 서버에게 ID write
+                send( hSocket, userID, strlen(userID), 0);
+
+                // 서버로부터 난수 read
+                strLen = recv(hSocket, randValue, KEY_SIZE, 0);
+                printf("Receive randomNumber\n= ");
+                PrintHex(randValue, KEY_SIZE);
+
+                memset(inHash, '\0', MAX_MESSAGE_SIZE);
+                strncat(inHash, userID, strlen(userID));
+                strncat(inHash, randValue, KEY_SIZE);
+
+                Hash(inHash, (int)strlen(inHash), (unsigned char*)outHash, &outHashLen);
+                BN_bin2bn(outHash, outHashLen, bn_plane);
+
+	        printf("HashValue\n= ");
+	        PrintHex(outHash, outHashLen);
+	        printf("\nBIGNUM= %s\n\n", BN_bn2dec(bn_plane));
+	        getchar();
+
+	        // 암호화
+	        BN_mod_exp(bn_cipher, bn_plane, bn_d, bn_n, bn_ctx);
+	        printf("\n= %s\n\n", BN_bn2dec(bn_cipher));
+
+                cipherText = BN_bn2dec(bn_cipher);
+                printf("\nSend cipherText\n= %s\n\n", cipherText);
+	        getchar();
+
+                // 서버에게 ID write
+                send( hSocket, cipherText, strlen(cipherText) , 0);
+
+                cnt++;
+
+                printf("wait...\n");
+	        
+                recv(hSocket, auth, 2, 0);
+                printf("Authentication : %s\n", auth);
+
+        }
+
+        return 0;
+}
+
+void ErrorHandling(char *s)
+{
+        fputs(s, stderr);
+        fputc('\n', stderr);
+        exit(1);
+}
+
+int Hash(unsigned char *InStr, int InStrLen, unsigned char *OutStr, int *OutStrLen)
+{
+        EVP_MD_CTX md_ctx;
+
+        *OutStrLen = 0;
+        EVP_MD_CTX_init(&md_ctx);
+        EVP_SignInit_ex(&md_ctx, EVP_sha1(), NULL);
+        EVP_SignUpdate(&md_ctx, InStr, InStrLen);
+
+        EVP_DigestFinal_ex(&md_ctx, OutStr, (unsigned int*)OutStrLen);
+        EVP_MD_CTX_cleanup(&md_ctx);
+
+        return 0;
+}
+
+void PrintHex(unsigned char *str, int strLen)
+{
+	int i;
+	for( i=0 ; i<strLen ; i ++ )
+		printf("%02x", str[i]);
+	printf("\n\n");
+}
+
+</pre>
+</body>
+
+</html>

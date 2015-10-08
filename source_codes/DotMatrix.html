@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="UTF-8">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Line Editor</title>
+	<script type="text/javascript" src="./../syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+	<script type="text/javascript" src="./../syntaxhighlighter_3.0.83/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="./../syntaxhighlighter_3.0.83/styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<pre class="brush: js;">
+
+COLRED		EQU	0FFC5H	
+ROW		EQU	0FFC7H
+
+TEMP		EQU	24H		; 임시 저장 변수
+COUNT		EQU	20H		; 반복 횟수 저장 변수
+RFOUR		EQU	23H		; 임의의 수 비교값 보관
+I		EQU	21H		; 열 인덱스 저장
+J		EQU	22H		; 행 인덱스 저장
+
+		ORG	8000H
+
+		MOV	COUNT, #01H	; 카운트(수행횟수)에 첫번째 행과열을 지정
+
+		MOV	R0,#01H		; 행 레지스터
+		MOV	R1,#01H		; 열 레지스터
+		CALL	DRAW_POINT	; 첫번째 LED 켜기
+
+START:		CALL    COMPARE		; COUNT 비교 루틴 수행
+
+START2:         INC	COUNT		; COUNT 증가
+		MOV	A,COUNT	
+		CJNE	A,#15H, START	; 0~14번째 까지 수행
+          
+;***********************************************
+;      TABLEACCESS                             *
+;      기능: TABLE에서 DB 값(I,J) 젒근         *
+;***********************************************
+TABLEACCESS:	MOV	DPTR,#TABLE	
+		MOV     A,I
+                MOVC	A,@A+DPTR
+		MOV	R1,A		; 열 값 지정
+
+		MOV	A, J
+		MOVC	A,@A+DPTR
+		MOV	R0,A		; 행 값 지정
+		RET
+		
+
+
+;************************************************
+;       COMPARE    				*
+;	기능 : COUNT(1~14)와 RFOUR		*
+;	       (입력되는 임의의 수)를 비교	*
+;************************************************
+COMPARE:	MOV	TEMP, COUNT	
+		MOV	RFOUR,#08H	; RFOUR에 시작값 저장
+		CALL	LOOP
+		RET
+
+		
+LOOP:		DEC	RFOUR		; 07번째 부터 비교 시작
+                MOV	A,RFOUR		
+		JZ	LOOP1		; 00번째까지 모두 수행시 LOOP1 루틴 수행
+                MOV	A, TEMP		
+                CJNE	A, RFOUR, LOOP	; 비교 후 일치하지 않으면 계속 LOOP 수행
+		
+		;비교 후 일치하면				
+                MOV	I,COUNT		; (열 변수 I는 COUNT와 동일한 횟수로 실행되므로)
+		MOV	J,#00H		; (행 변수 J는 00부터 시작)
+		CALL	DOTON		
+
+DECLOOP:	DEC	I		; 열 감소
+		INC	J		; 행 증가
+		CALL	DOTON		
+		MOV	A, I		
+		CJNE	A, #00H, DECLOOP ; 첫번째 열까지 DECLOOP수행
+		RET
+		
+LOOP1:		MOV	I,#07H		; 8번째 열부터 시작
+		MOV	A,COUNT		; A에 COUNT(#0FFH)저장
+		MOV	R3, #07H
+		SUBB	A, R3		; A = COUNT(08~14) - 7 
+		MOV	J, A		; 행값A를 J에 저장
+
+INCLOOP:	INC	J		; 행 증가		
+		DEC	I		; 열 감소
+		CALL	DOTON
+		MOV	A, J		
+		CJNE	A, #07H, INCLOOP   ; 07번째 행까지 INCLOOP 수행
+		CALL    START2
+
+
+;************************************************
+;	DOTON 					*
+;	기능 : 도트 매트릭스 LED켜기    	*
+;************************************************
+DOTON:		CALL	TABLEACCESS	; 테이블 접근
+		CALL	DRAW_POINT	; LED 켜기
+		RET
+
+
+
+
+;************************************************
+;	DRAW_POINT FUNC	 			*
+;	기능 : 주어진 행(R0)과 열(R1)의 값에    *
+;	       해당하는 빨간색 LED를 켜기	*
+;************************************************
+DRAW_POINT:	MOV	DPTR, #COLRED	
+		MOV	A, R1
+		MOVX	@DPTR, A
+
+		MOV	DPTR, #ROW
+		MOV	A, R0
+		MOVX	@DPTR, A
+		CALL	DELAY
+		RET
+
+TABLE:		DB	01H, 02H, 04H, 08H
+                DB	10H, 20H, 40H, 80H
+
+;************************************************
+;	DELAY FUNC				*
+;	기능 : LED가 켜져 있는 시간 조절	*
+;************************************************
+
+DELAY:       MOV    R7,#01H
+;DELAY1:      MOV    R6,#0CFH
+;DELAY2:      DJNZ   R6,DELAY2
+;             DJNZ   R7,DELAY1
+             RET 
+
+
+		END
+
+</pre>
+
+</html>

@@ -1,0 +1,43 @@
+#contact-area {
+	width: 540px;
+	margin-top: 25px;
+}
+
+#contact-area input{
+padding: 5px;
+width: 300px;
+margin: 0px 0px 10px 0px;
+border: 2px solid #d3d1d1;
+/*Border Radius*/
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+#contact-area input:focus {
+	border: 2px solid #2b81d8;
+}
+
+#contact-area input.submit-button {
+width: 100px;
+float: right;
+/*Gradient BG*/
+background: #5d6e76; /* for non-css3 browsers */
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cbd9e4', endColorstr='#5d6e76'); /* for IE */
+background: -webkit-gradient(linear, left top, left bottom, from(#cbd9e4), to(#5d6e76)); /* for webkit browsers */
+background: -moz-linear-gradient(top,  #cbd9e4,  #5d6e76); /* for firefox 3.6+ */
+border:1px solid #5e6f77;
+color:#fff;
+font-weight:bold;
+}
+
+label {
+float: left;
+color:#2b81d8;
+text-align: right;
+margin-right: 15px;
+font-size: 20px;
+font-weight:bold;
+width: 100px;
+padding-top: 5px;
+font-size: 14px;
+}

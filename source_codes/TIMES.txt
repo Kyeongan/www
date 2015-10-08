@@ -1,0 +1,10 @@
+kyeongan.cs.uh.edu
+\\times-web-host.times.uh.edu
+
+kyeongan.cpl.uh.edu (3306)
+kyeongan
+
+
+www.cpl.uh.edu
+\\times-cpl-www.times.uh.edu
+

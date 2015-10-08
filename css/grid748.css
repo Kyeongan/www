@@ -1,0 +1,45 @@
+.container {
+	width: 748px;
+	margin: 0 auto;
+}
+.grid1, .grid2, .grid3, .grid4, .grid5, .grid6, .grid7, .grid8, .grid9, .grid10, .grid11 {
+	float: left;
+	margin-left: 20px;
+}
+.grid1 {
+	width: 44px;
+}
+.grid2 {
+	width: 108px;
+}
+.grid3 {
+	width: 172px;
+}
+.grid4 {
+	width: 236px;
+}
+.grid5 {
+	width: 300px;
+}
+.grid6 {
+	width: 364px;
+}
+.grid7 {
+	width: 428px;
+}
+.grid8 {
+	width: 492px;
+}
+.grid9 {
+	width: 556px;
+}
+.grid10 {
+	width: 620px;
+}
+.grid11 {
+	width: 684px;
+}
+.first {
+	margin-left: 0;
+	clear: left;
+}

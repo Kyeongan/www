@@ -1,0 +1,102 @@
+.clearboth{
+clear:both;
+}
+#csstabs li{ padding:2px;}
+#csstabs{ position:relative; width:560px; height:100px;margin-left:80px;}
+#csstabs h3{ 
+color:#1d79d6;
+padding:5px;
+height:30px;
+line-height:30px;
+text-align:center;
+cursor:hand;
+display:block; 
+font-size:18px;
+font-weight:bold;
+margin:0;
+background-color:#f6f5f5;
+/*border radius*/
+-webkit-border-top-left-radius: 5px;
+-webkit-border-top-right-radius: 5px;
+-moz-border-radius-topleft: 5px;
+-moz-border-radius-topright: 5px;
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+border-top:1px solid #cecbcb;
+border-left:1px solid #cecbcb;
+border-right:1px solid #cecbcb;
+}
+.tabcontent{
+padding:10px 0 0 40px;
+width:100%;
+background:#f6f5f5;
+border:1px solid #cecbcb;
+position:absolute;
+left:0;
+top:40px;
+height:150px;
+display:block;
+margin:0;
+/*border radius*/
+-webkit-border-top-right-radius: 5px;
+-webkit-border-bottom-right-radius: 5px;
+-webkit-border-bottom-left-radius: 5px;
+-moz-border-radius-topright: 5px;
+-moz-border-radius-bottomleft: 5px;
+-moz-border-radius-bottomright: 5px;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+border-bottom-left-radius: 5px;
+}
+.tabcontent h2
+{
+color:#5c5a5a;
+font-size:24px;
+font-weight:bold;
+line-height:24px;
+text-align:left;
+}
+.tabcontent h6
+{
+color:#5c5a5a;
+font-size:16px;
+line-height:16px;
+text-align:center;
+}
+#tab1 .tabcontent{
+z-index:2;
+background:#f6f5f5;
+}
+#tab1 h3{
+z-index:3;
+width:150px;
+position:absolute;
+left:0;
+top:0;
+cursor:hand;
+background:#f6f5f5;
+}
+#tab2 .tabcontent{
+z-index:1; 
+opacity:0;
+}
+#tab2 h3{
+width:150px;
+position:absolute;
+left:180px;
+top:0;
+cursor:hand;
+}
+#csstabs:hover h3, #tabs:focus h3, #tabs:active h3{
+background:#f6f5f5;
+z-index:0;
+}
+#csstabs:hover .tabcontent, #tabs:focus .tabcontent, #tabs:active .tabcontent{
+z-index:0;
+opacity:0;
+-webkit-transition : opacity .75s ease-in;
+}
+#tab1:hover h3,#tab1:focus h3,#tab1:active h3{z-index:4;background:#f6f5f5;}
+#tab1:hover .tabcontent,#tab1:focus .tabcontent,#tab1:active .tabcontent{	z-index:3;	background:#f6f5f5; opacity:1; -webkit-transition : opacity 2s ease-in;}
+#tab2:hover h3,#tab2:focus h3,#tab2:active h3{z-index:4;background:#f6f5f5;}
+#tab2:hover .tabcontent,#tab2:focus .tabcontent,#tab2:active .tabcontent{	z-index:3;	background:#f6f5f5; opacity:1; -webkit-transition : opacity 2s ease-in;}

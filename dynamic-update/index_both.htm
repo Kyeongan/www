@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+
+
+$(function () {
+    $(document).ready(function() {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+    
+        var chart;
+        $('#container').highcharts({
+            chart: {
+                type: 'spline',
+                marginRight: 10,
+                events: {
+                    load: function() {
+    
+                        // set up the updating of the chart each second
+						var b_rate = [98.81666667,98.71666667,85.6,78.71666667,79.13333333,81.43333333,76.81666667,86.76666667,83.36666667,92.18333333,83.61666667,89.23333333,87.96666667,92.56666667,87.25,86.41666667,92.18333333,103.8,84.56666667,80.8,87.43333333,86.88333333,87.3,93.08333333,87.2,79.86666667,85.35,79.71666667,81.91666667,80.7,81.43333333,76.56666667,79.93333333,79.25,81.78333333,77.95,77.78333333,79.15,76.31666667,79.98333333,76.78333333,80.05,77.7,75,80.2,76.6,78.01666667,80.98333333,76.95,78.53333333,82.03333333,76.73333333,77.45,83.48333333,80.7,78.63333333,76.4,76.08333333,79.35,80.66666667,73.86666667,73.48333333,73.23333333,80.28333333,75.3,75.01666667,77.15,74.4,77.01666667,73.7,74.41666667,77.4,78.85,74.83333333,70.35,74.45,77.03333333,74.73333333,71.18333333,76,75.35,73.9,71.5,76.61666667,70.43333333,72.43333333,73.21666667,81.7,83.95,74.68333333,86.55,88.1,78.86666667];
+
+						var h_rate = [13.15,7.88,10.54666667,15.43666667,14.95,15.48333333,15.7,17.29,20.50333333,18.08666667,13.16,18.61666667,15.67333333,16.52666667,11.20666667,20.21666667,18.64333333,16.80333333,14.66,14.23,24.82333333,20.67333333,20.62333333,20.75666667,18.86333333,15.62,19.91333333,19.75,19.45333333,19.98333333,19.37666667,20.22333333,18.65666667,18.18666667,19.62666667,19.69333333,19.20666667,19.48666667,19.64666667,19.54,18.80333333,17.46333333,20.11333333,19.8,19.37,17.14333333,20.25666667,19.82,19.01333333,20.56,18.58,19.79333333,18.79666667,18.94666667,19.71,17.21333333,17.63,16.64333333,15.17333333,16.89,18.33666667,18.49333333,18.38,19.91666667,19.13333333,19.75333333,19.39333333,19.20333333,18.68333333,17.38333333,18.97666667,16.97,19.04666667,18.51,20.26666667,19.18333333,17.63,19.73333333,19.15666667,19.14666667,21.53666667,19.74333333,18.74333333,18.02333333,18.29333333,21.29,19.73333333,19.66333333,12.16666667,16.56333333,12.15333333,18.48,18.24];
+
+                        var series = this.series;
+//                        var series2 = this.series2[0];
+						var limit = b_rate.length;
+						var idx = 0;
+                        setInterval(function() {
+                            var x = (new Date()).getTime(), // current time
+								//	y = Math.random();
+								y = b_rate[0, idx],
+								y2 = h_rate[0, idx];
+							idx = idx + 1;
+							if( idx== limit )
+								idx = 0;
+                            series[0].addPoint([x, y], true, true);
+							series[1].addPoint([x,y2],true, true);
+                        }, 2000);
+                    }
+                }
+            },
+            title: {
+                text: 'Live Zephyr data'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                title: {
+                    text: 'Value'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function() {
+                        return '<b>'+ this.series.name +'</b><br/>'+
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: 'Breath Rate',
+                data: (function() {
+                    // generate an array of Breath data (initial data)
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+    
+                    for (i = -100; i <= 0; i++) {
+                        data.push({
+                            x: time + i * 1000,
+                            y: 0
+                        });
+                    }
+                    return data;
+                })()
+            },
+			{
+				name: 'Heart Rate',
+                data: (function() {
+                    // generate an array of Breath data (initial data)
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+    
+                    for (i = -100; i <= 0; i++) {
+                        data.push({
+                            x: time + i * 1000,
+                            y: 0
+                        });
+                    }
+                    return data;
+                })()
+			}
+			]
+        });
+
+    });
+    
+});
+
+
+		</script>
+	</head>
+	<body>
+<script src="../../js/highcharts.js"></script>
+<script src="../../js/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 300px; margin: 0 auto"></div>
+
+
+	</body>
+</html>

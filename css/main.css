@@ -1,0 +1,129 @@
+body {
+    font-family: sans-serif;
+    font-size: 14px;
+    background-color: #FFFFFF;
+    background-image: url(./images/) background-image: url(./images/bg.jpg);
+    margin: 3em 5em 5em 5em;
+    line-height: 150%;
+    /* color:#545454;*/
+}
+
+
+table {
+    max-width: 1000px;
+    min-width: 600px;
+}
+
+
+section {
+    margin: 50px 0 0 0;
+}
+
+.social{
+    margin: 150px 0 0 0;
+}
+
+p{
+	font-size: 13px;
+	font-weight:bold;
+}
+	 
+a:link, a:visited{
+	color: #0000FF;
+	text-decoration:none;
+}
+
+a:hover{
+	text-decoration:underline;
+}
+	 
+me{
+	font-weight:bold;
+}
+
+skills{
+	text-decoration:underline;
+}
+
+skillset{
+	color:#727272;
+	font-size: 15px;
+}
+
+h1{
+	font-size: 25px;
+	display: inline;
+}
+
+h2{
+	font-size: 23px;
+	display: inline;
+}
+
+h3{
+	font-size: 15px;
+	display: inline;
+}
+
+h4{
+	font-size: 12px;
+	display: inline;
+}
+
+
+li{
+	line-height:180%;
+}
+
+menu{
+	color: #FF9900;
+	font-size: 14px;
+	text-decoration:none;
+	text-align:right
+
+}
+
+#hr_Dotted {
+  border-top: 0.5px dotted;
+  width:100%;
+}
+
+Rounded-Corners{
+	border:2px solid #a1a1a1;
+	padding:10px 40px; 
+	background:#dddddd;
+	width:300px;
+	border-radius:25px;
+	-moz-border-radius:25px; /* Firefox 3.6 and earlier */
+}
+
+img{
+	vertical-align:middle;
+}
+
+#footer
+{
+    clear: both;
+    border: 0px groove #aaaaaa;
+    background: #ffffff;
+    color: #000000;
+    padding: 0;
+    text-align: left;
+    vertical-align: middle;
+    line-height: normal;
+    margin: 0;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
+
+.footer {
+	font-size: 12px;
+	text-align:center;
+	margin: 50px 0 0 0;
+}
+
+img.desaturate {
+	-webkit-filter: grayscale(30%);
+	filter: grayscale(30%);
+}

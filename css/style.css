@@ -1,0 +1,83 @@
+body{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	background-color: #FFFFFF;
+	background-image:url(./images/)
+	background-image:url(./images/bg.jpg);
+	margin:3em 1em 3em 1em;
+	line-height:150%;
+}
+
+p{
+	font-size: 13px;
+	color:#FF3300;
+}
+	 
+a:link, a:visited{
+	color: #0000FF;
+	text-decoration:none;
+}
+
+a:hover{
+	text-decoration:underline;
+}
+	 
+me{
+	text-decoration:underline;
+	font-weight:bold;
+}
+
+skills{
+	text-decoration:underline;
+}
+
+skillset{
+	color:#727272;
+	font-size: 15px;
+}
+
+h1{
+	font-size: 20px;
+	display: inline;
+}
+
+h2{
+	font-size: 18px;
+	display: inline;
+}
+
+h3{
+	font-size: 16px;
+	display: inline;
+}
+
+h4{
+	font-size: 12px;
+	display: inline;
+}
+
+li{
+	line-height:180%;
+}
+
+menu{
+	color: #FF9900;
+	font-size: 14px;
+	text-decoration:none;
+	text-align:right
+
+}
+
+Rounded-Corners{
+	border:2px solid #a1a1a1;
+	padding:10px 40px; 
+	background:#dddddd;
+	width:300px;
+	border-radius:25px;
+	-moz-border-radius:25px; /* Firefox 3.6 and earlier */
+}
+
+img{
+	vertical-align:middle;
+}
+
